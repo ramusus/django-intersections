@@ -25,8 +25,7 @@ class VkFetchGroupMembersThread(threading.Thread):
 
     def __init__(self, group, *args, **kwargs):
         threading.Thread.__init__(self, *args, **kwargs)
-
-        self.daemon = True
+        self.daemon = False # gunicorn workers are restarted, so deamon not work
 
         self.group = group
         self.members_in_db_count = 0 # group.members.count()
@@ -71,7 +70,7 @@ class TwitterFetchFollowersThread(threading.Thread):
 
     def __init__(self, user, *args, **kwargs):
         threading.Thread.__init__(self, *args, **kwargs)
-        self.daemon = True
+        self.daemon = False # gunicorn workers are restarted, so deamon not work
         self.user = user
 
     def run(self):
@@ -88,14 +87,14 @@ class InstagramFetchFollowersThread(threading.Thread):
     user = None
     @property
     def followers_in_db_count(self):
-        if hasattr(user, '_followers_ids'):
+        if hasattr(self.user, '_followers_ids'):
             return len(self.user._followers_ids)
 
         return 0
 
     def __init__(self, user, *args, **kwargs):
         threading.Thread.__init__(self, *args, **kwargs)
-        self.daemon = True
+        self.daemon = False # gunicorn workers are restarted, so deamon not work
         self.user = user
 
     def run(self):
